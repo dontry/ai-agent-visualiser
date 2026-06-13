@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  @apply bg-zinc-950 text-zinc-100 antialiased overflow-hidden;
+}
+
+.bg-grid-pattern {
+  background-image: radial-gradient(circle at 1px 1px, #333 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+  border-radius: 20px;
+}
+
+@keyframes path-flow {
+  to {
+    stroke-dashoffset: -8;
+  }
+}
+
+.animate-path-flow {
+  animation: path-flow 0.5s linear infinite;
+}
+
