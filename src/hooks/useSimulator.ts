@@ -4,6 +4,7 @@ import { scenarios } from '../data/scenarios';
 
 function deriveState(history: RuntimeEvent[]): SimulatorState {
   let state: AgentSimulatorState = "idle";
+  let currentAgent = "Main Agent";
   const contextStack: MessageCard[] = [];
   let activeTool: ActiveTool | null = null;
   let streamBuffer = "";
@@ -28,6 +29,10 @@ function deriveState(history: RuntimeEvent[]): SimulatorState {
       case "APPEND_CONTEXT":
         contextStack.push({ id, role: ev.role, content: ev.content, name: ev.name });
         state = "context_updated";
+        break;
+      case "HANDOFF_AGENT":
+        currentAgent = ev.agentName;
+        state = "routing_to_agent";
         break;
       case "CALL_LLM":
         if (streamBuffer.trim().length > 0 || reasoningBuffer.trim().length > 0) {
@@ -106,7 +111,7 @@ function deriveState(history: RuntimeEvent[]): SimulatorState {
     }
   });
 
-  return { agentState: state, contextStack, activeTool, streamBuffer, reasoningBuffer, failureReason, interruptedReason, inputQueue };
+  return { currentAgent, agentState: state, contextStack, activeTool, streamBuffer, reasoningBuffer, failureReason, interruptedReason, inputQueue };
 }
 
 export function useSimulator() {

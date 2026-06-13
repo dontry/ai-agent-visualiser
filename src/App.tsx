@@ -104,8 +104,13 @@ export default function App() {
           <div className="absolute inset-0 opacity-20 pointer-events-none bg-grid-pattern"></div>
           
           <AnimatePresence>
+            <motion.div layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 bg-zinc-900/80 border border-indigo-500/30 rounded-full flex items-center gap-3 backdrop-blur-sm shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                <div className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)] animate-pulse"></div>
+                <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Active Agent: {sim.simulatorState.currentAgent}</span>
+            </motion.div>
+
             {sim.pendingEvents[0]?.type === "WAIT_FOR_USER" && (sim.pendingEvents[0] as any).action === "APPROVE" && (
-              <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="absolute top-6 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 bg-emerald-950/80 border border-emerald-500/50 rounded-full flex items-center gap-3 backdrop-blur-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+              <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="absolute top-14 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 bg-emerald-950/80 border border-emerald-500/50 rounded-full flex items-center gap-3 backdrop-blur-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></div>
                 <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest">Human Approval Required</span>
               </motion.div>

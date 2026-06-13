@@ -19,7 +19,8 @@ export function Flowchart({ currentState, pendingEvents }: { currentState: Agent
      else if (n.type === 'INTERRUPT_CURRENT_RUN') nextState = 'interrupted';
      else if (n.type === 'CANCEL_RUN') nextState = 'cancelled';
      else if (n.type === 'COMPLETE_RUN') nextState = 'done';
-     else if (n.type === 'RETRY_TOOL') nextState = 'executing_tool';
+     else if (n.type === 'WAIT_FOR_USER') nextState = null;
+     else if (n.type === 'HANDOFF_AGENT') nextState = 'routing_to_agent';
   }
 
   const NODES: Record<AgentSimulatorState, { x: number, y: number }> = {
@@ -32,6 +33,7 @@ export function Flowchart({ currentState, pendingEvents }: { currentState: Agent
     streaming_response: { x: 110, y: 580 },
     done: { x: 110, y: 670 },
     
+    routing_to_agent: { x: 310, y: 400 },
     tool_call_pending: { x: 310, y: 490 },
     executing_tool: { x: 310, y: 580 },
     tool_result_received: { x: 310, y: 670 },
@@ -52,6 +54,8 @@ export function Flowchart({ currentState, pendingEvents }: { currentState: Agent
     { from: 'calling_llm', to: 'streaming_response' },
     { from: 'reasoning', to: 'streaming_response' },
     { from: 'calling_llm', to: 'tool_call_pending' },
+    { from: 'calling_llm', to: 'routing_to_agent' },
+    { from: 'routing_to_agent', to: 'calling_llm' },
     { from: 'reasoning', to: 'tool_call_pending' },
     { from: 'streaming_response', to: 'done' },
     { from: 'tool_call_pending', to: 'executing_tool' },
@@ -75,6 +79,13 @@ export function Flowchart({ currentState, pendingEvents }: { currentState: Agent
     }
     if (from === 'failed' && to === 'executing_tool') {
       return `M ${p1.x + BOX_W} ${p1.y} L 400 ${p1.y} L 400 ${p2.y} L ${p2.x + BOX_W + 8} ${p2.y}`;
+    }
+    
+    if (from === 'calling_llm' && to === 'routing_to_agent') {
+      return `M ${p1.x + BOX_W} ${p1.y - 10} L ${p2.x - BOX_W - 8} ${p2.y - 10}`;
+    }
+    if (from === 'routing_to_agent' && to === 'calling_llm') {
+      return `M ${p1.x - BOX_W} ${p1.y + 10} L ${p2.x + BOX_W + 8} ${p2.y + 10}`;
     }
 
     if (p1.x === p2.x) {
@@ -195,6 +206,7 @@ export function Flowchart({ currentState, pendingEvents }: { currentState: Agent
         <StateBox id="streaming_response" label="Streaming" highlight="indigo" />
         <StateBox id="done" label="Done" />
         
+        <StateBox id="routing_to_agent" label="Routing" highlight="amber" step="HND / ROUTE" />
         <StateBox id="tool_call_pending" label="Tool Pending" highlight="amber" step="03 / TOOLS" />
         <StateBox id="executing_tool" label="Executing" highlight="amber" />
         <StateBox id="tool_result_received" label="Result Rx" highlight="amber" />

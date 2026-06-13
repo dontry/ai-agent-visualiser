@@ -15,7 +15,8 @@ export type RuntimeEvent =
   | { type: "COMPLETE_RUN" }
   | { type: "WAIT_FOR_USER"; action: "RETRY" | "INTERRUPT" | "CANCEL" | "APPROVE" }
   | { type: "CANCEL_RUN"; reason: string }
-  | { type: "RETRY_TOOL" };
+  | { type: "RETRY_TOOL" }
+  | { type: "HANDOFF_AGENT"; agentName: string };
 
 export type AgentSimulatorState =
   | "idle"
@@ -31,6 +32,7 @@ export type AgentSimulatorState =
   | "interrupted"
   | "failed"
   | "cancelled"
+  | "routing_to_agent"
   | "done";
 
 export type MessageCard = {
@@ -48,6 +50,7 @@ export type ActiveTool = {
 };
 
 export type SimulatorState = {
+  currentAgent: string;
   agentState: AgentSimulatorState;
   contextStack: MessageCard[];
   activeTool: ActiveTool | null;

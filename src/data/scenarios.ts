@@ -143,5 +143,46 @@ export const scenarios: { id: string; name: string; description: string; events:
       { type: "LLM_TEXT_DELTA", content: "It's currently 65°F and partly cloudy in Seattle." },
       { type: "COMPLETE_RUN" }
     ]
+  },
+  {
+    id: "scenario-8",
+    name: "Multi-Agent Handoff",
+    description: "The Planning Agent breaks down a complex task and routes sub-tasks to the Coding Agent and Testing Agent.",
+    events: [
+      { type: "QUEUE_USER_MESSAGE", message: "Build and test a multi-agent application." },
+      { type: "START_PROCESSING" },
+      { type: "APPEND_CONTEXT", role: "user", content: "Build and test a multi-agent application." },
+      { type: "CALL_LLM" },
+      { type: "LLM_REASONING_DELTA", content: "I am the Planning Agent.\n" },
+      { type: "LLM_REASONING_DELTA", content: "I need to break down the user's task.\n" },
+      { type: "LLM_REASONING_DELTA", content: "1. Hand off to Coding Agent to build.\n" },
+      { type: "LLM_REASONING_DELTA", content: "2. Hand off to Testing Agent to test." },
+      { type: "LLM_TEXT_DELTA", content: "I've planned the architecture. " },
+      { type: "LLM_TEXT_DELTA", content: "Handing off implementation to the Coding Agent." },
+      { type: "HANDOFF_AGENT", agentName: "Coding Agent" },
+      { type: "CALL_LLM" },
+      { type: "LLM_REASONING_DELTA", content: "I am the Coding Agent.\n" },
+      { type: "LLM_REASONING_DELTA", content: "I will write the application code.\n" },
+      { type: "LLM_TOOL_CALL", toolName: "File System", args: '{"path": "src/App.tsx", "action": "write"}' },
+      { type: "CALL_TOOL", toolName: "File System", args: '{"path": "src/App.tsx", "action": "write"}' },
+      { type: "TOOL_RESULT", toolName: "File System", result: "File written successfully." },
+      { type: "APPEND_CONTEXT", role: "tool", content: "File written successfully.", name: "File System" },
+      { type: "CALL_LLM" },
+      { type: "LLM_TEXT_DELTA", content: "Code is written. Handing off to Testing Agent." },
+      { type: "HANDOFF_AGENT", agentName: "Testing Agent" },
+      { type: "CALL_LLM" },
+      { type: "LLM_REASONING_DELTA", content: "I am the Testing Agent.\n" },
+      { type: "LLM_REASONING_DELTA", content: "Running tests on the new code." },
+      { type: "LLM_TOOL_CALL", toolName: "Test Runner", args: '{"command": "npm test"}' },
+      { type: "CALL_TOOL", toolName: "Test Runner", args: '{"command": "npm test"}' },
+      { type: "TOOL_RESULT", toolName: "Test Runner", result: "Tests passed: 4/4" },
+      { type: "APPEND_CONTEXT", role: "tool", content: "Tests passed: 4/4", name: "Test Runner" },
+      { type: "CALL_LLM" },
+      { type: "LLM_TEXT_DELTA", content: "All tests have passed beautifully." },
+      { type: "HANDOFF_AGENT", agentName: "Main Agent" },
+      { type: "CALL_LLM" },
+      { type: "LLM_TEXT_DELTA", content: "The multi-agent task is complete." },
+      { type: "COMPLETE_RUN" }
+    ]
   }
 ];
